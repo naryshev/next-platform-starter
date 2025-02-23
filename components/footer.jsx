@@ -2,10 +2,10 @@ import Link from 'next/link';
 
 export function Footer() {
     return (
-        <footer className="pt-16 pb-12 sm:pt-24 sm:pb-16">
+        <footer className="fixed bottom-0 left-0 right-0 pb-12 z-10 flex justify-center">
             <p className="text-sm">
-                <Link href="https://docs.netlify.com/frameworks/next-js/overview/" className="underline transition decoration-dashed text-primary underline-offset-8 hover:opacity-80">
-                    Next.js on Netlify
+                <Link href="/fyi" className="transition text-[#32E6E2] hover:opacity-80 underline underline-offset-4">
+                    whats this?
                 </Link>
             </p>
         </footer>

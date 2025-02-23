@@ -1,8 +1,12 @@
 const colors = require('tailwindcss/colors');
 const defaultTheme = require('tailwindcss/defaultTheme');
 
+/** @type {import('tailwindcss').Config} */
 module.exports = {
-    content: ['./app/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
+    content: [
+        './app/**/*.{js,jsx,ts,tsx}',
+        './components/**/*.{js,jsx,ts,tsx}',
+    ],
     theme: {
         extend: {
             backgroundImage: {
@@ -13,7 +17,16 @@ module.exports = {
             },
             fontFamily: {
                 sans: ['Inter', ...defaultTheme.fontFamily.sans]
-            }
+            },
+            keyframes: {
+                'spin-y': {
+                    '0%': { transform: 'rotateY(0deg)' },
+                    '100%': { transform: 'rotateY(360deg)' },
+                }
+            },
+            animation: {
+                'spin-y': 'spin-y 3s linear infinite',
+            },
         }
     },
     daisyui: {

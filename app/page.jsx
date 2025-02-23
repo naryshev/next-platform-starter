@@ -1,67 +1,70 @@
-import Link from 'next/link';
-import { Card } from 'components/card';
-import { RandomQuote } from 'components/random-quote';
-import { Markdown } from 'components/markdown';
-import { ContextAlert } from 'components/context-alert';
-import { getNetlifyContext } from 'utils';
+"use client";
 
-const cards = [
-    //{ text: 'Hello', linkText: 'someLink', href: '/' }
-];
-
-const contextExplainer = `
-The card below is rendered on the server based on the value of \`process.env.CONTEXT\` 
-([docs](https://docs.netlify.com/configure-builds/environment-variables/#build-metadata)):
-`;
-
-const preDynamicContentExplainer = `
-The card content below is fetched by the client-side from \`/quotes/random\` (see file \`app/quotes/random/route.js\`) with a different quote shown on each page load:
-`;
-
-const postDynamicContentExplainer = `
-On Netlify, Next.js Route Handlers are automatically deployed as [Serverless Functions](https://docs.netlify.com/functions/overview/).
-Alternatively, you can add Serverless Functions to any site regardless of framework, with acccess to the [full context data](https://docs.netlify.com/functions/api/).
-
-And as always with dynamic content, beware of layout shifts & flicker! (here, we aren't...)
-`;
-
-const ctx = getNetlifyContext();
+import { useState } from 'react';
 
 export default function Page() {
+    const [email, setEmail] = useState('');
+    const [status, setStatus] = useState('');
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setStatus('Subscribing...');
+        try {
+            const response = await fetch('/api/subscribe', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email }),
+            });
+            
+            if (response.ok) {
+                setStatus('Thanks for subscribing!');
+                setEmail('');
+            } else {
+                setStatus('Something went wrong. Please try again.');
+            }
+        } catch (error) {
+            setStatus('Something went wrong. Please try again.');
+        }
+    };
+
     return (
-        <main className="flex flex-col gap-8 sm:gap-16">
-            <section className="flex flex-col items-start gap-3 sm:gap-4">
-                <ContextAlert />
-                <h1 className="mb-0">Netlify Platform Starter - Next.js</h1>
-                <p className="text-lg">Get started with Next.js and Netlify in seconds.</p>
-                <Link
-                    href="https://docs.netlify.com/frameworks/next-js/overview/"
-                    className="btn btn-lg btn-primary sm:btn-wide"
-                >
-                    Read the Docs
-                </Link>
-            </section>
-            {!!ctx && (
-                <section className="flex flex-col gap-4">
-                    <Markdown content={contextExplainer} />
-                    <RuntimeContextCard />
-                </section>
-            )}
-            <section className="flex flex-col gap-4">
-                <Markdown content={preDynamicContentExplainer} />
-                <RandomQuote />
-                <Markdown content={postDynamicContentExplainer} />
-            </section>
-            {/* !!cards?.length && <CardsGrid cards={cards} /> */}
+        <main className="fixed inset-0 flex flex-col items-center justify-center p-4 -mt-20 z-0">
+            <h1 className="text-4xl font-bold mb-8 text-[#32E6E2] animate-spin-y perspective">
+                <span className="inline-block">ONE</span>
+                <span className="inline-block">XANIEL</span>
+            </h1>
+            
+            <form onSubmit={handleSubmit} className="w-full max-w-md space-y-4">
+                <div className="relative">
+                    <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Enter your email"
+                        required
+                        className="w-full px-4 py-3 bg-transparent border-2 border-[#32E6E2] rounded-lg focus:outline-none focus:border-white transition-colors placeholder:text-gray-500"
+                    />
+                    <button 
+                        type="submit"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 bg-[#32E6E2] text-black rounded-md hover:bg-white transition-colors"
+                    >
+                        Subscribe
+                    </button>
+                </div>
+                {status && (
+                    <p className={`text-center ${
+                        status === 'Thanks for subscribing!' 
+                            ? 'text-[#32E6E2]' 
+                            : status === 'Subscribing...' 
+                                ? 'text-gray-400' 
+                                : 'text-red-500'
+                    }`}>
+                        {status}
+                    </p>
+                )}
+            </form>
         </main>
     );
-}
-
-function RuntimeContextCard() {
-    const title = `Netlify Context: running in ${ctx} mode.`;
-    if (ctx === 'dev') {
-        return <Card title={title} text="Next.js will rebuild any page you navigate to, including static pages." />;
-    } else {
-        return <Card title={title} text="This page was statically-generated at build time." />;
-    }
 }
