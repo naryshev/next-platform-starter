@@ -19,7 +19,7 @@ export default function RootLayout({ children }) {
                 <div 
                     className="fixed inset-0 w-full h-full z-0"
                     style={{
-                        backgroundImage: "url('/ocean.gif')",
+                        backgroundImage: "url('/images/ocean.gif')",
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         opacity: 0.6,
